@@ -1,0 +1,96 @@
+﻿@model IEnumerable<MyBlog.Models.Blog>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Home Page";
+}
+
+<header class="masthead" style="background-image: url('https://images.unsplash.com/photo-1480944657103-7fed22359e1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1332&q=80')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    <h1>Simple Blog</h1>
+                    <span class="subheading">New Blog</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            @foreach (var item in Model)
+            {
+                <div class="post-preview">
+                    <a asp-action="Post" asp-route-id="@item.Id">
+                        <h2 class="post-title">@item.Title</h2>
+                        <h3 class="post-subtitle">@item.Subtitle</h3>
+                    </a>
+                    <p class="post-meta">
+                        Posted by @item.Author.Name @item.CreateTime published
+                    </p>
+                </div>
+                <hr>
+            }
+
+            <nav aria-label="...">
+                <ul class="pagination pagination-sm float-right ">
+                    <li class="page-item disabled  ">
+                        <a class="page-link " href="#" tabindex="-1">1</a>
+                    </li>
+                    <li class="page-item "><a class="page-link text-dark" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link text-dark" href="#">3</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="subscriptionModal" tabindex="-1" role="dialog" aria-labelledby="subscriptionModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="subscriptionModalLabel">Subscribe to My Blog</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="/Home/Index" class="my-form">
+                    <div class="form-group">
+                        <input type="email" placeholder="Email address" class="form-control" id="email" name="email" required>
+                    </div>
+                      <button type="submit" class="btn btn-primary float-right">Submit</button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Abonelik formu gönderildiğinde
+    $('.my-form').submit(function (event) {
+        event.preventDefault(); // Formun varsayılan davranışını engelle
+
+        var form = $(this);
+        var url = form.attr('action');
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: form.serialize(),
+            success: function (data) {
+                // Abonelik işlemi başarılı ise alert göster
+                alert("Subscription successful! Thank you for subscribing.");
+                $('#subscriptionModal').modal('hide'); // Modalı gizle
+            },
+            error: function (data) {
+                // Hata durumunda alert göster
+                alert("An error occurred. Please try again.");
+            }
+        });
+    });
+</script>
